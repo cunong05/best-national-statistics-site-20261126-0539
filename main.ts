@@ -28,12 +28,14 @@ if (existsSync(join(here, 'screenshots'))) {
 // The scorer's caps: at most 4 screenshots, each at most 256 KiB; app/ at
 // most 993 files and directories and 16 MiB in all. The dossier text is
 // capped at 160 KiB by the library.
-writeFileSync(
-  join(out, 'dossier.json'),
-  buildDossier(out, {
-    text_max_bytes: 163840,
-    screenshots: { max: 4, max_bytes: 262144 },
-    app_max_files: 993,
-    app_max_bytes: 16777216,
-  }),
-);
+const dossier = buildDossier(out, {
+  text_max_bytes: 163840,
+  screenshots: { max: 4, max_bytes: 262144 },
+  app_max_files: 993,
+  app_max_bytes: 16777216,
+});
+writeFileSync(join(out, 'dossier.json'), dossier);
+
+// A short build summary on stdout only; it never touches /output, so the
+// two grader runs still write byte-identical files.
+console.log(`StatAtlas handed in: app/ + ${dossier.length}-byte dossier.json in ${out}`);
